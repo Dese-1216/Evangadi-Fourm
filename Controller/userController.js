@@ -2,6 +2,7 @@ const mysqlconnection = require("../db/dbconfig");
 const { StatusCodes } = require("http-status-codes");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+ 
 //register 
 const register = async (req, res) => {
   const { username, firstname, lastname, email, password } = req.body;
@@ -97,4 +98,39 @@ const checkuser = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "valid user", username, userid });
 };
 
-module.exports = { register, checkuser, login };
+// Inside postQuestion in Controller/userController.js
+
+
+// for the singleget question from  ELA 
+async function getSingleQuestion(req, res) {
+  try {
+    const questionId = req.params.question_id; // Use 'questionid' from your schema
+
+    // Validate questionid (should be a string, but ensure it's provided)
+    if (!questionId) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Question ID is required' });
+    }
+
+    const [results] = await mysqlconnection.query(
+      'SELECT q.questionid, q.title, q.description, q.tag, u.username ' +
+      'FROM questions q ' +
+      'JOIN users u ON q.userid = u.userid ' +
+      'WHERE q.questionid = ?',
+      [questionId]
+    );
+
+    if (results.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({ error: 'Question not found' });
+    }
+
+    res.status(StatusCodes.OK).json(results[0]);
+  } catch (error) {
+    console.error('Error in getSingleQuestion:', error.message);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Something went wrong, try again later!' });
+  }
+ 
+}
+
+
+
+module.exports = { register, checkuser, login ,getSingleQuestion};
