@@ -15,6 +15,8 @@ app.get("/", (req, res) => {
 });
 
 
+
+
 //user-route middleware
 app.use("/api/user", userRoutes);
 
@@ -26,7 +28,7 @@ const start=async()=> {
     // console.log(result);
     //Listen on port
     await app.listen(port);
-    console.log("database successfully established");
+    console.log(`database successfully established on port:http://localhost${port}`);
   } catch (err) {
     console.log(err.message);
   }
