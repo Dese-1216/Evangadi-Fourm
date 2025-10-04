@@ -3,7 +3,6 @@ const db = require("../db/dbconfig");
 const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
 
-
 // post question
 const askQuestion = async (req, res) => {
   const { title, description, tag } = req.body;
