@@ -1,12 +1,10 @@
-
-
 const mysqlconnection = require("../db/dbconfig");
 const asyncHandler = require("express-async-handler");
 const { StatusCodes } = require("http-status-codes");
 
 //post answer
 const postAnswer = asyncHandler(async (req, res) => {
-    // console.log(req.body);
+  // console.log(req.body);
   const { userid, questionid, answer } = req.body;
 
   // Error Handling for missing answers ---
@@ -62,25 +60,36 @@ const postAnswer = asyncHandler(async (req, res) => {
 // Get Answer
 
 const getanswer = async (req, res) => {
-  const questionid = req.query.questionid || "default_value";
-  //   console.log(req.query)
+  const { question_id } = req.params;
 
   try {
-    const readAnswers = `SELECT answers.*,Users.username FROM answers LEFT JOIN Users ON answers.userid = Users.userid where answers.questionid=?`;
-    const [answers] = await mysqlconnection.query(readAnswers, [questionid]);
+    const readAnswers = `
+    SELECT 
+      answers.answerid AS answer_id,
+      answers.answer AS content,
+      users.username AS user_name,
+      answers.created_at
+    FROM answers
+    LEFT JOIN users ON answers.userid = users.userid
+    WHERE answers.questionid = ?
+  `;
+
+    const [answers] = await mysqlconnection.query(readAnswers, [question_id]);
 
     if (answers.length === 0) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ msg: "No answers found for this question" });
+      return res.status(StatusCodes.NOT_FOUND).json({
+        error: "Not Found",
+        message: "The requested question could not be found.",
+      });
     }
 
     return res.status(StatusCodes.OK).json({ answers });
   } catch (error) {
     console.error("Error fetching answers:", error.stack);
-    return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ msg: "Something went wrong, try again later!" });
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: "Internal Server Error",
+      message: "An unexpected error occurred.",
+    });
   }
 };
 
