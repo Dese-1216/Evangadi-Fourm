@@ -1,43 +1,32 @@
-const express = require("express");
-const questionRoutes = require("./Routes/questionRoute");
+const express=require("express")
 
-//  question routes middle-ware
-app.use("/api/questions", questionRoutes);
+const app=express()
+const port=5600
+const userRoute=require('./Routes/userRoutes')
+const dbconnection=require('./db/dbconfig')
 
-const app = express();
-const port = 5000;
-require("dotenv").config();
-//import db
-const mysqlconnection = require("./db/dbconfig")
-//middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
 
-app.use("/api/answer", answerRoutes); 
-
-// Simple route to test
-app.get("/", (req, res) => {
-  res.send(`<h1>Response is sent successfully</h1>`);
-});
+app.use('/api/user' ,userRoute)
 
 
-//connection test
 
-const start=async()=> {
+async function start() {
   try {
-    const result = await mysqlconnection.execute("select 'test'");
-    // console.log(result);
-    //Listen on port
-    await app.listen(port);
-    console.log("database successfully established");
+    const result=await  dbconnection.execute("select 'connected`' ")
+    await app.listen(port)
+    console.log("database estalished");
+     console.log(`connected on port ${port}`);
+   
+
+    
   } catch (err) {
     console.log(err.message);
-  }
+    
+  }    
 }
-start();
+
+start()
 
 
-// app.listen(port, (err) => {
-//   console.log("connected http://localhost:5000");
-// })
 

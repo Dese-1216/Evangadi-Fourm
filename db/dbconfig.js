@@ -1,24 +1,25 @@
 const mysql2 = require("mysql2");
+// require("dotenv").config();
 
-// Create connection pool
-const mysqlconnection = mysql.createPool({
- main
-  user: process.env.DB_USER,
-  database: process.env.DB_DATABASE,
-  host: process.env.DB_HOST,
-  password: process.env.DB_PASSWORD,
-   connectionLimit: process.env.DB_CONNECTION_LIMIT || 10,
-});
+// const dbconnection = mysql2.createPool({
+//   user: process.env.DB_USER,
+//   database: process.env.DB_DATABASE,
+//   host: process.env.DB_HOST,
+//   password: process.env.DB_PASSWORD,
+ 
+// });
 
-// Test the connection
+const dbconnection=mysql2.createPool({
+    user:"Eyobs",
+    database:"evangadi-forum-practice",
+    password:"87654321",
+    host:"localhost",
+    port:"8889"
+    
 
-mysqlconnection.getConnection((err, connection) => {
-  if (err) {
-    console.error("Database connection failed:", err.message);
-  } else {
-    console.log("The connection is successful");
-    connection.release(); // release back to pool
-  }
-});
-module.exports = mysqlconnection.promise();
+})
+
+
+
+module.exports = dbconnection.promise();
 
