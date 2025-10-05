@@ -1,16 +1,12 @@
-import Home from "./pages/HomePage/Home";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
+import React from "react";
 import { Routes, Route } from "react-router-dom";
+import QuestionPage from "./components/QuestionPage/QuestionPage"; // Adjust path if needed
+
 const App = () => {
   return (
-    <div>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </div>
+    <Routes>
+      <Route path="/" element={<QuestionPage />} />
+    </Routes>
   );
 };
 
