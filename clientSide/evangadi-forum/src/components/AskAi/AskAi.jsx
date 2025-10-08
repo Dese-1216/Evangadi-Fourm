@@ -1,13 +1,31 @@
 import React, { useState } from "react";
-import styles from "./AskAi.module.css"; // Optional for styling
+import styles from "./AskAi.module.css";
+import axios from "axios";
 
 const AskAi = () => {
   const [prompt, setPrompt] = useState("");
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleAsk = () => {
-    console.log("AI Prompt:", prompt);
+  const handleAsk = async () => {
+    if (prompt === "") {
+      return console.error("please type a question");
+    }
+    setLoading(true);
     // TODO: Send prompt to AI backend and display response
-    setPrompt("");
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/ask-ai", {
+        prompt,
+      });
+      setResponse(res.data.reply);
+      setPrompt("");
+    } catch (error) {
+      console.log("Error asking AI", error);
+      setResponse(
+        "We could not find the response. You can try again later, or add open ai credit"
+      );
+    }
   };
 
   return (
@@ -20,8 +38,16 @@ const AskAi = () => {
         className={styles.textarea}
       />
       <button onClick={handleAsk} className={styles.button}>
-        Ask AI
+        {loading ? "Thinking..." : "Ask AI"}
       </button>
+      {/* the response */}
+
+      {response && (
+        <div className={styles.responseBox}>
+          <strong> AI Response: </strong>
+          <p>{response}</p>
+        </div>
+      )}
     </div>
   );
 };

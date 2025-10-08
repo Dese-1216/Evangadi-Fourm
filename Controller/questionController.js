@@ -3,35 +3,44 @@ const mysqlconnection = require("../db/dbconfig");
 const { StatusCodes } = require("http-status-codes");
 const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
+const OpenAI = require("openai");
 
+// open ai initialization
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // post question
 const askQuestion = async (req, res) => {
   const { title, description, tag } = req.body;
-  const userid = req.user.userid;
+  const userid = 1; // TEMP: hardcoded until auth is wired
+
   const generateQuestionId = () => {
     const randomBytes = crypto.randomBytes(16);
-    const uuid = uuidv4({ random: randomBytes });
-    return uuid;
+    return uuidv4({ random: randomBytes });
   };
+
   const questionid = generateQuestionId();
-  const askQuery = `INSERT INTO questions (questionid,userid,title,description,tag) VALUES (?,?,?,?,?)`;
+  const askQuery = `INSERT INTO questions (questionid, userid, title, description, tag) VALUES (?, ?, ?, ?, ?)`;
+
   try {
-    await mysqlconnection.query(askQuery, [
+    await mysqlconnection.promise().query(askQuery, [
       questionid,
       userid,
       title,
       description,
       tag,
     ]);
-    return res.status(StatusCodes.CREATED).json({ msg: "Question asked!" });
+    return res.status(StatusCodes.CREATED).json({ msg: "Question submitted!" });
   } catch (error) {
-    console.log(error.message);
+    console.error("MySQL error:", error); // Keep this
+    console.error("Full error object:", JSON.stringify(error, null, 2)); // Add this
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ msg: "something went wrong, try again later!" });
+      .json({ msg: "Something went wrong, try again later!" });
   }
 };
+
 // Get all questions
 // const getAllQuestions = async (req, res) => {
 //   const sqlQuery = `
@@ -60,9 +69,9 @@ const askQuestion = async (req, res) => {
 const getAllQuestions = async (req, res) => {
   try {
     const fechquestion = `SELECT questions.title,questions.questionid,Users.username FROM questions LEFT JOIN Users ON questions.userid = Users.userid order by id desc `;
-    const [response] = await mysqlconnection.query(fechquestion);
+    const [questions] = await mysqlconnection.query(fechquestion);
 
-    return res.status(StatusCodes.OK).json({ response });
+    return res.status(StatusCodes.OK).json({ questions });
   } catch (error) {
     console.log(error.message);
     return res
@@ -137,13 +146,17 @@ const deleteQuestion = async (req, res) => {
 
 // ask GPT
 const askgpt = async (req, res) => {
-  const { question } = req.body;
-  if (!question) return res.status(400).json({ error: "Question is required" });
+  const { prompt } = req.body;
+  if (!prompt) return res.status(400).json({ error: "Question is required" });
+
+  //  return res.json({
+  //   answer: "This is a test response, once open ai credi is made user will get real ai response"
+  //  })
 
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [{ role: "user", content: question }],
+      messages: [{ role: "user", content: prompt }],
     });
 
     const gptAnswer = response.choices[0].message.content;
