@@ -6,11 +6,11 @@ import AskAi from "../AskAi/AskAi";
 const QuestionPage = () => {
   const handleQuestionSubmit = async ({ title, description }) => {
     try {
-     await axios.post("http://localhost:5000/api/ask-question", {
-       title,
-       description,
-       tag:"React"
-     });
+      await axios.post("http://localhost:5000/api/ask-question", {
+        title,
+        description,
+        tag: "React",
+      });
 
       console.log("Question is submitted");
     } catch (error) {
