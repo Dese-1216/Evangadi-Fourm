@@ -28,7 +28,9 @@ app.use("/api/chatgpt", askgpt);
 app.get("/", (req, res) => {
   res.send(`<h1>Response is sent successfully</h1>`);
 });
-
+app.get("/test", (req, res) => {
+  res.send(`<h1>is working</h1>`);
+});
 //connection test
 
 const start = async () => {
