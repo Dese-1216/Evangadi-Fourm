@@ -5,9 +5,9 @@ const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
 const OpenAI = require("openai");
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 // post question
 const askQuestion = async (req, res) => {
@@ -169,34 +169,34 @@ const deleteQuestion = async (req, res) => {
 };
 
 // ask GPT
-const askgpt = async (req, res) => {
-  const { question } = req.body;
-  if (!question) return res.status(400).json({ error: "Question is required" });
+// const askgpt = async (req, res) => {
+//   const { question } = req.body;
+//   if (!question) return res.status(400).json({ error: "Question is required" });
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: question }],
-    });
+//   try {
+//     const response = await openai.chat.completions.create({
+//       model: "gpt-4o-mini",
+//       messages: [{ role: "user", content: question }],
+//     });
 
-    const gptAnswer = response.choices[0].message.content;
-    res.json({ answer: gptAnswer });
-  } catch (err) {
-    console.error("OpenAI error:", err);
+//     const gptAnswer = response.choices[0].message.content;
+//     res.json({ answer: gptAnswer });
+//   } catch (err) {
+//     console.error("OpenAI error:", err);
 
-    if (err.code === "insufficient_quota") {
-      return res.status(429).json({
-        error: "You exceeded your OpenAI quota. Check your plan and billing.",
-      });
-    }
-    res.status(500).json({ error: err.message || "ChatGPT error" });
-  }
-};
+//     if (err.code === "insufficient_quota") {
+//       return res.status(429).json({
+//         error: "You exceeded your OpenAI quota. Check your plan and billing.",
+//       });
+//     }
+//     res.status(500).json({ error: err.message || "ChatGPT error" });
+//   }
+// };
 
 module.exports = {
   getAllQuestions,
   askQuestion,
-  askgpt,
+  // askgpt,
   getSingleQuestion,
   editQuestion,
   deleteQuestion,

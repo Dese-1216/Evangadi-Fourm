@@ -11,7 +11,7 @@ const mysqlconnection = require("./db/dbconfig");
 const userRoutes = require("./Routes/userRoutes");
 const questionRoutes = require("./Routes/questionRoute");
 const answerRoutes = require("./Routes/answerRoutes");
-const askgpt = require("./Routes/questionRoute");
+// const askgpt = require("./Routes/questionRoute");
 
 //middleware
 app.use(express.json());
@@ -22,7 +22,7 @@ app.use(cors());
 app.use("/api/user", userRoutes);
 app.use("/api/questions", authMiddleware, questionRoutes);
 app.use("/api/answer", authMiddleware, answerRoutes);
-app.use("/api/chatgpt", askgpt);
+// app.use("/api/chatgpt", askgpt);
 
 // Simple route to test
 app.get("/", (req, res) => {
