@@ -2,6 +2,7 @@ const mysqlconnection = require("../db/dbconfig");
 const { StatusCodes } = require("http-status-codes");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
 //register 
 const register = async (req, res) => {
   const { username, firstname, lastname, email, password } = req.body;

@@ -171,9 +171,7 @@ const deleteQuestion = async (req, res) => {
 // ask GPT
 // const askgpt = async (req, res) => {
 //   const { question } = req.body;
-//   if (!question) return res.status(400).json({ error: "Question is required" });
-
-//   try {
+//   if (!question) return res.status(400).json({ error: "Que//   try {
 //     const response = await openai.chat.completions.create({
 //       model: "gpt-4o-mini",
 //       messages: [{ role: "user", content: question }],
@@ -192,6 +190,27 @@ const deleteQuestion = async (req, res) => {
 //     res.status(500).json({ error: err.message || "ChatGPT error" });
 //   }
 // };
+=======
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: question }],
+    });
+
+    const gptAnswer = response.choices[0].message.content;
+    res.json({ reply: gptAnswer });
+  } catch (err) {
+    console.error("OpenAI error:", err);
+
+    if (err.code === "insufficient_quota") {
+      return res.status(429).json({
+        error: "You exceeded your OpenAI quota. Check your plan and billing.",
+      });
+    }
+    res.status(500).json({ error: err.message || "ChatGPT error" });
+  }
+};
+
 
 module.exports = {
   getAllQuestions,
