@@ -31,6 +31,16 @@ app.get("/", (req, res) => {
 app.get("/test", (req, res) => {
   res.send(`<h1>is working</h1>`);
 });
+app.get("/dbtest", async (req, res) => {
+  try {
+    const [rows] = await mysqlconnection.query("SELECT NOW() AS time");
+    res.json({ status: "success", time: rows[0].time });
+  } catch (err) {
+    console.error("DB connection error:", err);
+    res.status(500).json({ status: "error", error: err.message });
+  }
+});
+
 //connection test
 
 const start = async () => {
