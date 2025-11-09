@@ -6,8 +6,7 @@ const {
   getSingleQuestion,
   editQuestion,
   deleteQuestion,
-  askgpt,
-
+  // askgpt, // <--- Comment this out: We are no longer exporting or using askgpt from the controller
 } = require("../Controller/questionController");
 
 
@@ -22,7 +21,11 @@ router.get("/question", getSingleQuestion);
 router.put("/question/:questionid", editQuestion);
 //delete question
 router.delete("/question/:questionid", deleteQuestion);
-//ask gpt
-router.post("/", askgpt);
+
+// --- START OpenAI-related route to comment out or remove ---
+// This route handler was for the askgpt function.
+// Since we've disabled askgpt in the controller, this route should also be commented out.
+// router.post("/", askgpt);
+// --- END OpenAI-related route ---
 
 module.exports = router;

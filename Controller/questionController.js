@@ -3,11 +3,21 @@ const mysqlconnection = require("../db/dbconfig");
 const { StatusCodes } = require("http-status-codes");
 const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
-const OpenAI = require("openai");
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// --- START OpenAI-related lines to comment out or remove ---
+
+// This line imports the OpenAI library.
+// If you're not using OpenAI, this line is not needed.
+// const OpenAI = require("openai");
+
+// This block initializes the OpenAI client with your API key.
+// If you're not using OpenAI, this entire block is not needed.
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
+
+// --- END OpenAI-related lines ---
+
 
 // post question
 const askQuestion = async (req, res) => {
@@ -43,9 +53,9 @@ const askQuestion = async (req, res) => {
 // const getAllQuestions = async (req, res) => {
 //   try {
 //     const fetchQuestions = `
-//       SELECT 
-//         questions.title, 
-//         questions.questionid, 
+//       SELECT
+//         questions.title,
+//         questions.questionid,
 //         Users.username,
 //         NOW() AS createdAt
 //       FROM questions
@@ -66,9 +76,9 @@ const askQuestion = async (req, res) => {
 
 const getAllQuestions = async (req, res) => {
   try {
-    
+
     const fetchQuestions = `
-      SELECT 
+      SELECT
     questions.title,
     questions.questionid,
     questions.userid,
@@ -99,11 +109,11 @@ async function getSingleQuestion(req, res) {
     const { questionid } = req.query;
 
     const fetchSingleQuestion = `
-      SELECT 
-        questions.questionid, 
-        questions.title, 
-        questions.description, 
-        questions.userid, 
+      SELECT
+        questions.questionid,
+        questions.title,
+        questions.description,
+        questions.userid,
         Users.username
       FROM questions
       LEFT JOIN Users ON questions.userid = Users.userid
@@ -168,12 +178,16 @@ const deleteQuestion = async (req, res) => {
   res.json({ message: "Question deleted" });
 };
 
-// ask GPT
+// ask GPT (This entire function is specific to OpenAI)
 const askgpt = async (req, res) => {
   const { question } = req.body;
   if (!question) return res.status(400).json({ error: "Question is required" });
 
   try {
+    // --- START OpenAI-specific logic to comment out or remove ---
+    // If 'openai' object is commented out above, this will cause a ReferenceError.
+    // So, this whole try-catch block should also be commented out or removed.
+    /*
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: question }],
@@ -181,9 +195,19 @@ const askgpt = async (req, res) => {
 
     const gptAnswer = response.choices[0].message.content;
     res.json({ reply: gptAnswer });
-  } catch (err) {
-    console.error("OpenAI error:", err);
+    */
 
+    // --- Replacement if `askgpt` endpoint is kept but not using OpenAI ---
+    // If you want to keep the '/askgpt' endpoint but disable its functionality
+    // or provide a placeholder response:
+    return res.status(501).json({ message: "AI question answering is currently disabled." });
+    // Or a more user-friendly message:
+    // return res.status(200).json({ reply: "I'm sorry, I cannot answer that question at the moment. My AI capabilities are offline." });
+
+    // --- END OpenAI-specific logic and replacement ---
+
+  } catch (err) {
+    console.error("OpenAI error:", err); // This error logging would also be commented out
     if (err.code === "insufficient_quota") {
       return res.status(429).json({
         error: "You exceeded your OpenAI quota. Check your plan and billing.",
@@ -196,7 +220,9 @@ const askgpt = async (req, res) => {
 module.exports = {
   getAllQuestions,
   askQuestion,
-  askgpt,
+  // If you comment out or remove the `askgpt` function entirely,
+  // remember to remove it from this `module.exports` object as well.
+  // askgpt, // Commented out because the function is disabled
   getSingleQuestion,
   editQuestion,
   deleteQuestion,
